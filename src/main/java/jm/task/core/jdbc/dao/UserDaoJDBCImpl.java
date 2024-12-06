@@ -19,25 +19,33 @@ public class UserDaoJDBCImpl implements UserDao {
     }
 
     public void createUsersTable() {
-        PreparedStatement ps = null;
         String sql = "CREATE TABLE IF NOT EXISTS users (" +
                 "id INT PRIMARY KEY AUTO_INCREMENT, " +
                 "name VARCHAR(100), " +
                 "lastName VARCHAR(100), " +
                 "age TINYINT" +
                 ");";
-
-        try {
-            Connection connection = Util.getConnection();
-            ps = connection.prepareStatement(sql);
+        try (Connection connection = Util.getConnection();
+             PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.executeUpdate();
+            System.out.println("Table 'users' created successfully.");
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            throw new RuntimeException("Error creating the table", e);
         }
     }
 
-    public void dropUsersTable() {
 
+    public void dropUsersTable() {
+        String sql = "DROP TABLE IF EXISTS users;";
+        try (Connection connection = Util.getConnection();
+             PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.executeUpdate();
+            System.out.println("Table 'users' dropped successfully.");
+        } catch (SQLException e) {
+            throw new RuntimeException("Error dropping the table", e);
+        }
     }
+
 
     public void saveUser(String name, String lastName, byte age) {
         String sql = "INSERT INTO users (name, lastName, age) VALUES (?, ?, ?);";

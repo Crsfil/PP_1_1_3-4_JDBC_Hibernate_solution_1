@@ -5,23 +5,19 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 
 public class Util {
-    // реализуйте настройку соеденения с БД
-    private static String url = "jdbc:mysql://localhost:3306/users_from_kata_work";
-    private static String user = "root"; // или имя вашего пользователя
-    private static String password = "root";
 
+    private static final String URL = "jdbc:mysql://localhost:3306/users_from_kata_work";
+    private static final String USER = "root"; // или имя вашего пользователя
+    private static final String PASSWORD = "root";
 
     public static Connection getConnection() {
-        Connection connection = null;
         try {
-            connection = DriverManager.getConnection(url, user, password);
+            Connection connection = DriverManager.getConnection(URL, USER, PASSWORD);
             System.out.println("Connected to database");
+            return connection;
         } catch (SQLException e) {
-            System.out.println("connection failed");
-            throw new RuntimeException(e);
+            System.err.println("Failed to connect to database");
+            throw new RuntimeException("Error connecting to the database: " + e.getMessage(), e);
         }
-        return connection;
     }
-
-
 }
