@@ -3,7 +3,6 @@ package jm.task.core.jdbc.dao;
 import jm.task.core.jdbc.model.User;
 import jm.task.core.jdbc.util.Util;
 
-import java.beans.Statement;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -23,7 +22,7 @@ public class UserDaoJDBCImpl implements UserDao {
                 "id INT PRIMARY KEY AUTO_INCREMENT, " +
                 "name VARCHAR(100), " +
                 "lastName VARCHAR(100), " +
-                "age TINYINT" +
+                "age INT" +
                 ");";
         try (Connection connection = Util.getConnection();
              PreparedStatement ps = connection.prepareStatement(sql)) {
