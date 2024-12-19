@@ -36,7 +36,7 @@ public class UserDaoHibernateImpl implements UserDao {
         try {
             Session session = sessionFactory.openSession();
             session.beginTransaction();
-            String sql = "DROP TABLE users;";
+            String sql = "DROP TABLE IF EXISTS users;";
             session.createSQLQuery(sql).executeUpdate();
             session.getTransaction().commit();
         } catch (HibernateException e) {
@@ -63,16 +63,41 @@ public class UserDaoHibernateImpl implements UserDao {
 
     @Override
     public void removeUserById(long id) {
-
+        try {
+            Session session = sessionFactory.openSession();
+            session.beginTransaction();
+            User user = (User) session.get(User.class, id);
+            session.delete(user);
+            session.getTransaction().commit();
+        }catch (HibernateException e) {
+            System.out.println(e.getMessage());
+        }
     }
 
     @Override
     public List<User> getAllUsers() {
+        try {
+            Session session = sessionFactory.openSession();
+            session.beginTransaction();
+            List<User> users = session.createQuery("from User").list();
+            session.getTransaction().commit();
+            return users;
+        }catch (HibernateException e) {
+            System.out.println(e.getMessage());
+        }
         return null;
     }
 
     @Override
     public void cleanUsersTable() {
-
+        try {
+            Session session = sessionFactory.openSession();
+            session.beginTransaction();
+            String sql = "DROP TABLE IF EXISTS users;";
+            session.createSQLQuery(sql).executeUpdate();
+            session.getTransaction().commit();
+        }catch (HibernateException e) {
+            System.out.println(e.getMessage());
+        }
     }
 }
