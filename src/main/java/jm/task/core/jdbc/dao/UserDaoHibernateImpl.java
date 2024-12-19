@@ -2,35 +2,63 @@ package jm.task.core.jdbc.dao;
 
 import jm.task.core.jdbc.model.User;
 import jm.task.core.jdbc.util.Util;
+import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 
 import java.util.List;
 
 public class UserDaoHibernateImpl implements UserDao {
-
-    private static final SessionFactory sessionFactory = Util.getSessionFactory();
-
-    public UserDaoHibernateImpl() {
-
-    }
+    public static final SessionFactory sessionFactory = Util.getSessionFactory();
+    public UserDaoHibernateImpl() {}
 
 
     @Override
     public void createUsersTable() {
-        Session session = sessionFactory.openSession();
-        session.beginTransaction();
-
+        try {
+            Session session = sessionFactory.openSession();
+            session.beginTransaction();
+            String sql = "CREATE TABLE IF NOT EXISTS users (" +
+                    "id INT PRIMARY KEY AUTO_INCREMENT, " +
+                    "name VARCHAR(100), " +
+                    "lastName VARCHAR(100), " +
+                    "age INT" +
+                    ");";
+            session.createSQLQuery(sql).executeUpdate();
+            session.getTransaction().commit();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
     public void dropUsersTable() {
-
+        try {
+            Session session = sessionFactory.openSession();
+            session.beginTransaction();
+            String sql = "DROP TABLE users;";
+            session.createSQLQuery(sql).executeUpdate();
+            session.getTransaction().commit();
+        } catch (HibernateException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override
     public void saveUser(String name, String lastName, byte age) {
+        try {
+            Session session = sessionFactory.openSession();
+            session.beginTransaction();
+            User user = new User();
+            user.setName(name);
+            user.setLastName(lastName);
+            user.setAge(age);
+            session.save(user);
+            session.getTransaction().commit();
 
+        }catch (HibernateException e) {
+            System.out.println(e.getMessage());
+        }
     }
 
     @Override

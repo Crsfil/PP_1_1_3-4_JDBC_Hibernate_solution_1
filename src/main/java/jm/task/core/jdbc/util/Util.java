@@ -30,13 +30,7 @@ public class Util {
     public static SessionFactory getSessionFactory() {
         if (sessionFactory == null) {
             try {
-                Configuration configuration = new Configuration();
-                configuration.setProperty("hibernate.connection.url", URL);
-                configuration.setProperty("hibernate.connection.username", USER);
-                configuration.setProperty("hibernate.connection.password", PASSWORD);
-                configuration.setProperty("hibernate.dialect", "org.hibernate.dialect.MySQL5Dialect");
-                configuration.setProperty("hibernate.hbm2ddl.auto", "update");
-                configuration.setProperty("hibernate.show_sql", "true");
+                Configuration configuration = getConfiguration();
 
                 configuration.addAnnotatedClass(User.class);
 
@@ -50,6 +44,17 @@ public class Util {
             }
         }
         return sessionFactory;
+    }
+
+    private static Configuration getConfiguration() {
+        Configuration configuration = new Configuration();
+        configuration.setProperty("hibernate.connection.url", URL);
+        configuration.setProperty("hibernate.connection.username", USER);
+        configuration.setProperty("hibernate.connection.password", PASSWORD);
+        configuration.setProperty("hibernate.dialect", "org.hibernate.dialect.MySQL5Dialect");
+        configuration.setProperty("hibernate.hbm2ddl.auto", "update");
+        configuration.setProperty("hibernate.show_sql", "true");
+        return configuration;
     }
 
     public static void shutdown() {
