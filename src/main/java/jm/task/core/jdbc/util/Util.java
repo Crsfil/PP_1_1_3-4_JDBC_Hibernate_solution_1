@@ -14,6 +14,7 @@ public class Util {
     private static final String URL = "jdbc:mysql://localhost:3306/users_from_kata_work";
     private static final String USER = "root"; // или имя вашего пользователя
     private static final String PASSWORD = "root";
+    private static SessionFactory sessionFactory;
 
     public static Connection getConnection() {
         try {
@@ -26,20 +27,36 @@ public class Util {
         }
     }
 
-    SessionFactory getSessionFactory() {
-        Configuration config = new Configuration();
-        config.setProperty("hibernate.connection.url", URL);
-        config.setProperty("hibernate.connection.username", USER);
-        config.setProperty("hibernate.connection.password", PASSWORD);
-        config.setProperty("hibernate.dialect", "org.hibernate.dialect.MySQL5Dialect");
-        config.setProperty("hibernate.hbm2ddl.auto", "update");
-        config.setProperty("hibernate.show_sql", "true");
+    public static SessionFactory getSessionFactory() {
+        if (sessionFactory == null) {
+            try {
+                Configuration configuration = new Configuration();
+                configuration.setProperty("hibernate.connection.url", URL);
+                configuration.setProperty("hibernate.connection.username", USER);
+                configuration.setProperty("hibernate.connection.password", PASSWORD);
+                configuration.setProperty("hibernate.dialect", "org.hibernate.dialect.MySQL5Dialect");
+                configuration.setProperty("hibernate.hbm2ddl.auto", "update");
+                configuration.setProperty("hibernate.show_sql", "true");
 
-        config.addAnnotatedClass(User.class);
+                configuration.addAnnotatedClass(User.class);
 
-        StandardServiceRegistryBuilder builder = new StandardServiceRegistryBuilder()
-                .applySettings(config.getProperties());
+                StandardServiceRegistryBuilder builder = new StandardServiceRegistryBuilder()
+                        .applySettings(configuration.getProperties());
 
-        return config.buildSessionFactory(builder.build());
+                sessionFactory = configuration.buildSessionFactory(builder.build());
+            } catch (Exception e) {
+                System.err.println("Failed to create SessionFactory.");
+                e.printStackTrace();
+            }
+        }
+        return sessionFactory;
     }
+
+    public static void shutdown() {
+        if (sessionFactory != null) {
+            sessionFactory.close();
+            System.out.println("Hibernate SessionFactory closed.");
+        }
+    }
+    
 }
