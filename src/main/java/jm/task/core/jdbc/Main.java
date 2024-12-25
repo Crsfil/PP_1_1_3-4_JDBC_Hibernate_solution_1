@@ -21,7 +21,7 @@ public class Main {
 
 
 
-        userDao.createUsersTable();
+        userDaoHibernate.createUsersTable();
 
         userDao.saveUser("Name1", "LastName1", (byte) 20);
         userDao.saveUser("Name2", "LastName2", (byte) 25);
